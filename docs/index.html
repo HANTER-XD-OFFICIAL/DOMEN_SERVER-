@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexHost - Custom Domain Hosting for GitHub Pages</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Background Glow Effects -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <span class="logo-icon">🌐</span>
+        <span class="logo-text">ApexHost <span class="badge">Cloud</span></span>
+      </div>
+      <nav class="nav-links">
+        <a href="#request-section">Request Domain</a>
+        <a href="#status-section">Status Checker</a>
+        <a href="#dns-guide">DNS Instructions</a>
+        <a href="#admin-info" class="btn-ghost">Admin Console</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero container">
+    <div class="hero-badge">⚡ Powered by Supabase & GitHub Pages</div>
+    <h1 class="hero-title">Host Custom Domains on <span class="gradient-text">GitHub Pages</span></h1>
+    <p class="hero-subtitle">
+      Connect your custom domain to any GitHub Pages repository with automatic DNS generation, Let's Encrypt SSL, and real-time approval workflow.
+    </p>
+  </section>
+
+  <!-- Main Grid -->
+  <div class="container main-grid">
+    <!-- Domain Request Form Card -->
+    <section id="request-section" class="card form-card">
+      <div class="card-header">
+        <div class="icon-circle">🚀</div>
+        <div>
+          <h2>Request Custom Domain</h2>
+          <p>Submit your domain details for administrator review & DNS provisioning</p>
+        </div>
+      </div>
+
+      <form id="domainRequestForm">
+        <div class="form-group">
+          <label for="domainInput">Custom Domain Name <span class="req">*</span></label>
+          <input type="text" id="domainInput" placeholder="e.g. portfolio.alex.dev or myblog.com" required>
+          <span class="input-hint">Both apex domains and subdomains supported</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="githubUserInput">GitHub Username <span class="req">*</span></label>
+            <input type="text" id="githubUserInput" placeholder="e.g. alexraselchodhury" required>
+          </div>
+          <div class="form-group">
+            <label for="githubRepoInput">Target Repository <span class="req">*</span></label>
+            <input type="text" id="githubRepoInput" placeholder="e.g. portfolio-site" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientNameInput">Your Name <span class="req">*</span></label>
+            <input type="text" id="clientNameInput" placeholder="e.g. Alex Rasel" required>
+          </div>
+          <div class="form-group">
+            <label for="clientEmailInput">Email Address <span class="req">*</span></label>
+            <input type="email" id="clientEmailInput" placeholder="e.g. alex@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notesInput">Project Notes</label>
+          <textarea id="notesInput" rows="2" placeholder="Tell us about your project (framework, traffic, etc.)"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary">
+          <span>Submit Request to Supabase</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <div id="formAlert" class="alert hidden"></div>
+    </section>
+
+    <!-- Right Column: Status Checker & Live Preview -->
+    <div class="side-column">
+      <!-- Live Status Checker Card -->
+      <section id="status-section" class="card status-card">
+        <div class="card-header">
+          <div class="icon-circle">🔍</div>
+          <div>
+            <h3>Check Domain Status</h3>
+            <p>Track approval and DNS propagation status</p>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" id="checkDomainInput" placeholder="Enter domain (e.g. alexdev.me)">
+          <button id="lookupBtn" class="btn btn-secondary">Lookup</button>
+        </div>
+
+        <div id="statusResult" class="status-result hidden">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- Interactive CNAME Generator -->
+      <section class="card cname-generator-card">
+        <div class="card-header">
+          <div class="icon-circle">📄</div>
+          <div>
+            <h3>Repository CNAME Generator</h3>
+            <p>File needed in your GitHub Pages root directory</p>
+          </div>
+        </div>
+        <div class="code-box">
+          <div class="code-header">
+            <span>File: CNAME</span>
+            <button id="copyCnameBtn" class="copy-btn">Copy</button>
+          </div>
+          <pre><code id="cnamePreviewCode">alexdev.me</code></pre>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- DNS Configuration Guide -->
+  <section id="dns-guide" class="container guide-section">
+    <div class="section-heading">
+      <h2>GitHub Pages DNS Records Reference</h2>
+      <p>Configure these records at your DNS registrar (Cloudflare, Namecheap, GoDaddy, etc.)</p>
+    </div>
+
+    <div class="table-container">
+      <table class="dns-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Host Name</th>
+            <th>Value / Target</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-a">A</span></td>
+            <td><code>@</code></td>
+            <td><code>185.199.108.153</code></td>
+            <td>GitHub Pages Apex Server 1</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-a">A</span></td>
+            <td><code>@</code></td>
+            <td><code>185.199.109.153</code></td>
+            <td>GitHub Pages Apex Server 2</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-a">A</span></td>
+            <td><code>@</code></td>
+            <td><code>185.199.110.153</code></td>
+            <td>GitHub Pages Apex Server 3</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-a">A</span></td>
+            <td><code>@</code></td>
+            <td><code>185.199.111.153</code></td>
+            <td>GitHub Pages Apex Server 4</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-cname">CNAME</span></td>
+            <td><code>www</code> (or subdomain)</td>
+            <td><code>&lt;username&gt;.github.io</code></td>
+            <td>GitHub Pages Canonical Mapping</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Admin Integration Footer -->
+  <footer id="admin-info" class="footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="logo-text">ApexHost Cloud</div>
+        <p>Supabase-backed Domain Management System & Admin Panel for Android</p>
+        <p class="subtext">Endpoint: <code>https://yejqvregkkyhxxjblnii.supabase.co</code></p>
+      </div>
+      <div class="footer-right">
+        <div class="tech-stack">
+          <span class="tech-pill">Supabase PostgreSQL</span>
+          <span class="tech-pill">GitHub Pages</span>
+          <span class="tech-pill">Android Jetpack Compose</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
