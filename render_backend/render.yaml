@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: domain-hosting-backend
+    runtime: node
+    plan: free
+    region: frankfurt # or oregon, singapore
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        value: https://yejqvregkkyhxxjblnii.supabase.co
+      - key: SUPABASE_KEY
+        value: sb_publishable_BSvIvMTDe0rgsZjpnWUxjw_wkWv6I7C
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health

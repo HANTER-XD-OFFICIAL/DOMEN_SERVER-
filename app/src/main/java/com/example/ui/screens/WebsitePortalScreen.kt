@@ -57,6 +57,7 @@ import com.example.ui.DomainViewModel
 import com.example.ui.theme.CyberTeal
 import com.example.ui.theme.ElectricBlue
 import com.example.ui.theme.SuccessGreen
+import com.example.ui.theme.WarningAmber
 
 @Composable
 fun WebsitePortalScreen(
@@ -105,17 +106,22 @@ fun WebsitePortalScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Portal Simulator", fontSize = 12.sp) }
+                    text = { Text("Portal Simulator", fontSize = 11.sp) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Website Source Code", fontSize = 12.sp) }
+                    text = { Text("Pages Code", fontSize = 11.sp) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("Deploy Guide", fontSize = 12.sp) }
+                    text = { Text("Fix 404 & Deploy", fontSize = 11.sp) }
+                )
+                Tab(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
+                    text = { Text("Render Backend", fontSize = 11.sp) }
                 )
             }
         }
@@ -318,7 +324,38 @@ fun WebsitePortalScreen(
             }
 
             2 -> {
-                // Deployment Guide
+                // Deployment & 404 Guide
+                item {
+                    // Urgent Fix Banner for 404 File Not Found
+                    Surface(
+                        color = WarningAmber.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, WarningAmber),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text(
+                                text = "⚠️ How to Fix '404 File Not Found' (Screenshot Issue)",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = WarningAmber
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "In your GitHub repository settings, the branch is currently set to:\n" +
+                                       "• main > /docs\n\n" +
+                                       "When set to /docs, GitHub Pages only looks inside a folder named 'docs'.\n\n" +
+                                       "SOLUTION (2 Easy Options):\n" +
+                                       "1. Option A (Recommended): In GitHub Settings > Pages > Branch, change '/docs' to '/ (root)' and click Save.\n" +
+                                       "2. Option B: Create a folder named 'docs/' in your repo and put index.html, styles.css, app.js inside it.",
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -327,28 +364,105 @@ fun WebsitePortalScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "3-Step GitHub Pages Deployment",
+                                text = "GitHub Pages Custom Domain Setup (domenserver.nl8.eu)",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = CyberTeal
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "1. In repo Settings > Pages > Custom domain:\n" +
+                                       "   Enter: domenserver.nl8.eu\n\n" +
+                                       "2. Add CNAME DNS Record at your domain registrar:\n" +
+                                       "   • Type: CNAME\n" +
+                                       "   • Host/Name: domenserver\n" +
+                                       "   • Target/Value: hanter-xd-official.github.io\n\n" +
+                                       "3. Once DNS Check completes, check 'Enforce HTTPS'!",
+                                fontSize = 12.sp,
+                                lineHeight = 19.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+
+            3 -> {
+                // Render Backend Tab
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Render.com Backend Web Service",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 color = CyberTeal
                             )
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Express.js REST API with live DNS resolver and Supabase PostgreSQL integration.",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(RENDER_SERVER_JS))
+                                        onShowToast("Render server.js copied to clipboard!")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = CyberTeal),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Black)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Copy server.js", fontSize = 11.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                                }
+
+                                OutlinedButton(
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(RENDER_PACKAGE_JSON))
+                                        onShowToast("package.json copied to clipboard!")
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Copy package.json", fontSize = 11.sp)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
 
                             Text(
-                                text = "Step 1: Create a GitHub Repository\n" +
-                                       "• Create a new repository (e.g. 'domain-hosting-portal' or 'username.github.io').\n\n" +
-                                       "Step 2: Upload Portal Files\n" +
-                                       "• Upload 'index.html', 'styles.css', and 'app.js' (pre-configured with Supabase URL & Anon Key).\n\n" +
-                                       "Step 3: Enable GitHub Pages\n" +
-                                       "• Go to repo Settings > Pages.\n" +
-                                       "• Under 'Branch', select 'main' and '/ (root)', then click Save.\n" +
-                                       "• Your website is immediately live at https://<username>.github.io/<repo>/!\n\n" +
-                                       "Step 4: Custom Domain\n" +
-                                       "• In the Custom Domain field, enter your desired domain.\n" +
-                                       "• GitHub will automatically issue a Let's Encrypt SSL certificate within minutes.",
+                                text = "How to Deploy on Render:",
+                                fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp,
-                                lineHeight = 20.sp,
                                 color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "1. Go to https://dashboard.render.com > New + > Web Service\n" +
+                                       "2. Connect your GitHub repo (containing server.js and package.json)\n" +
+                                       "3. Build Command: npm install\n" +
+                                       "4. Start Command: node server.js\n" +
+                                       "5. Environment Variables:\n" +
+                                       "   • SUPABASE_URL = https://yejqvregkkyhxxjblnii.supabase.co\n" +
+                                       "   • SUPABASE_KEY = sb_publishable_BSvIvMTDe0rgsZjpnWUxjw_wkWv6I7C\n" +
+                                       "   • NODE_ENV = production",
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -474,3 +588,71 @@ document.getElementById('domainForm')?.addEventListener('submit', async (e) => {
   }
 });
 """.trimIndent()
+
+val RENDER_PACKAGE_JSON = """
+{
+  "name": "domain-hosting-backend",
+  "version": "1.0.0",
+  "description": "Render backend service for Domain Hosting System connected to Supabase",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+""".trimIndent()
+
+val RENDER_SERVER_JS = """
+const express = require('express');
+const cors = require('cors');
+const dns = require('dns').promises;
+require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://yejqvregkkyhxxjblnii.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_BSvIvMTDe0rgsZjpnWUxjw_wkWv6I7C';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+
+app.get('/api/domains', async (req, res) => {
+  const { data, error } = await supabase.from('domain_requests').select('*').order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ success: false, error: error.message });
+  res.json({ success: true, count: data.length, data });
+});
+
+app.post('/api/domains', async (req, res) => {
+  const { domain_name, github_username, github_repo, client_name, client_email } = req.body;
+  const newReq = {
+    domain_name: domain_name.trim().toLowerCase(),
+    github_username: github_username.trim(),
+    github_repo: github_repo || `${'$'}{github_username.trim().toLowerCase()}.github.io`,
+    client_name: client_name || github_username,
+    client_email: client_email.trim(),
+    status: 'pending',
+    ssl_status: 'pending',
+    cname_target: `${'$'}{github_username.trim().toLowerCase()}.github.io`,
+    dns_verification_token: 'gh-verify-' + Math.random().toString(36).substring(2, 9)
+  };
+  const { data, error } = await supabase.from('domain_requests').insert([newReq]).select();
+  if (error) return res.status(500).json({ success: false, error: error.message });
+  res.status(201).json({ success: true, data: data[0] });
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${'$'}{PORT}`));
+""".trimIndent()
+
