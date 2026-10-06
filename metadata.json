@@ -1,0 +1,6 @@
+{
+  "name": "DomainHost Admin",
+  "description": "Domain hosting system admin panel with Supabase backend, DNS management, GitHub Pages CNAME integration, and domain request provisioning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
